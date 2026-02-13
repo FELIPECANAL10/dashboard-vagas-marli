@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Vagas - Marli Souza</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #718096;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            color: #667eea;
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .filters {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .filters h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-item label {
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .filter-item input:focus,
+        .filter-item select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-reset {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-reset:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .vagas-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .vaga-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            border-left: 5px solid #667eea;
+        }
+
+        .vaga-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .vaga-card.aberta {
+            border-left-color: #48bb78;
+        }
+
+        .vaga-card.expirada {
+            border-left-color: #cbd5e0;
+            opacity: 0.7;
+        }
+
+        .vaga-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .vaga-title {
+            flex: 1;
+        }
+
+        .vaga-title h3 {
+            color: #2d3748;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+
+        .vaga-title .organizacao {
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.aberta {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-badge.expirada {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .vaga-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-item .icon {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .info-item .label {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .info-item .value {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .requisitos {
+            margin-bottom: 20px;
+        }
+
+        .requisitos h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .requisitos ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .requisitos li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #4a5568;
+        }
+
+        .requisitos li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .observacoes {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .observacoes p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .compatibilidade {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .compatibilidade.muito-alta {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .compatibilidade.alta {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .compatibilidade.media {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .compatibilidade.baixa {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .vaga-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-link {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-link:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .prazo {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .prazo.urgente {
+            color: #e53e3e;
+            font-weight: 600;
+        }
+
+        .no-results {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .no-results h3 {
+            color: #2d3748;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .no-results p {
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .vaga-header {
+                flex-direction: column;
+            }
+
+            .vaga-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Dashboard de Vagas - Marli Souza</h1>
+            <p>Oportunidades em Comunicação Institucional, Jornalismo e Produção Audiovisual</p>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #a0aec0;">
+                Última atualização: <strong id="ultima-atualizacao">13 de fevereiro de 2026</strong>
+            </p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total de Vagas</h3>
+                <div class="number" id="total-vagas">7</div>
+            </div>
+            <div class="stat-card">
+                <h3>Vagas Abertas</h3>
+                <div class="number" style="color: #48bb78;" id="vagas-abertas">2</div>
+            </div>
+            <div class="stat-card">
+                <h3>Vagas Expiradas</h3>
+                <div class="number" style="color: #cbd5e0;" id="vagas-expiradas">5</div>
+            </div>
+            <div class="stat-card">
+                <h3>Alta Compatibilidade</h3>
+                <div class="number" style="color: #667eea;" id="alta-compatibilidade">4</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <h2>🔍 Filtros</h2>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label for="filter-busca">Buscar por palavra-chave</label>
+                    <input type="text" id="filter-busca" placeholder="Ex: UNESCO, Paris, Press Officer...">
+                </div>
+                <div class="filter-item">
+                    <label for="filter-status">Status</label>
+                    <select id="filter-status">
+                        <option value="">Todos</option>
+                        <option value="Aberta">Abertas</option>
+                        <option value="Expirada">Expiradas</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="filter-localizacao">Localização</label>
+                    <select id="filter-localizacao">
+                        <option value="">Todas</option>
+                        <option value="Paris">Paris</option>
+                        <option value="Bruxelas">Bruxelas</option>
+                        <option value="Londres">Londres</option>
+                        <option value="Espanha">Espanha</option>
+                        <option value="Outras">Outras</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="filter-tipo">Tipo de Organização</label>
+                    <select id="filter-tipo">
+                        <option value="">Todas</option>
+                        <option value="Instituição Multilateral">Instituição Multilateral</option>
+                        <option value="Museu Público">Museu Público</option>
+                        <option value="Agência de Notícias">Agência de Notícias</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-reset" onclick="resetFilters()">Limpar Filtros</button>
+        </div>
+
+        <div class="vagas-container" id="vagas-container">
+            <!-- Vagas serão inseridas aqui via JavaScript -->
+        </div>
+
+        <div class="no-results" id="no-results" style="display: none;">
+            <h3>Nenhuma vaga encontrada</h3>
+            <p>Tente ajustar os filtros para ver mais resultados.</p>
+        </div>
+    </div>
+
+    <script>
+        const vagasData = {
+  "metadata": {
+    "data_atualizacao": "2026-02-13",
+    "total_vagas": 7,
+    "vagas_abertas": 2,
+    "vagas_expiradas": 5
+  },
+  "vagas": [
+    {
+      "id": 1,
+      "titulo": "Press Officer",
+      "organizacao": "UNESCO",
+      "tipo_organizacao": "Instituição Multilateral",
+      "localizacao": "Paris, França",
+      "prioridade_localizacao": "Alta",
+      "tipo_contrato": "P-3 (Fixed Term, 2 anos com renovação)",
+      "salario": "USD 116.527 - 152.583",
+      "status": "Expirada",
+      "prazo": "2022-07-25",
+      "link": "https://untalent.org/jobs/press-officer-2",
+      "requisitos_principais": [
+        "Mestrado em comunicação, jornalismo, linguística, relações internacionais",
+        "Mínimo 4 anos de experiência (2 anos internacional)",
+        "Forte background em jornalismo global",
+        "Excelente inglês ou francês + bom conhecimento do outro"
+      ],
+      "compatibilidade_marli": "Alta",
+      "observacoes": "Vaga expirada há 3 anos, mas serve como referência para futuras posições na UNESCO"
+    },
+    {
+      "id": 4,
+      "titulo": "Chargé.e de communication 360° du Musée d'Art Moderne de Paris",
+      "organizacao": "Paris Musées - Musée d'Art Moderne",
+      "tipo_organizacao": "Museu Público",
+      "localizacao": "Paris, França",
+      "prioridade_localizacao": "Alta",
+      "tipo_contrato": "Função Pública Territorial - Categoria B",
+      "salario": "Não especificado",
+      "status": "Aberta",
+      "prazo": "2026-03-31",
+      "link": "https://www.parismusees.paris.fr/fr/node/7471",
+      "requisitos_principais": [
+        "Formação em comunicação, marketing ou cultura",
+        "Experiência em comunicação 360°, idealmente setor cultural",
+        "Domínio INDISPENSÁVEL do inglês",
+        "Excelentes qualidades redacionais",
+        "Domínio de ferramentas digitais e Adobe Suite"
+      ],
+      "compatibilidade_marli": "Muito Alta",
+      "observacoes": "VAGA ALTAMENTE RELEVANTE - Museu público em Paris, comunicação institucional, requer inglês. Prazo até 31/03/2026."
+    },
+    {
+      "id": 5,
+      "titulo": "Communication Officer, EIB Group Media",
+      "organizacao": "European Investment Bank (EIB)",
+      "tipo_organizacao": "Instituição Multilateral",
+      "localizacao": "Bruxelas, Bélgica",
+      "prioridade_localizacao": "Alta",
+      "tipo_contrato": "Full-time, Grade 5, Permanente",
+      "salario": "Não especificado",
+      "status": "Expirada",
+      "prazo": "2026-01-27",
+      "link": "https://www.unjobnet.org/jobs/detail/83829076",
+      "requisitos_principais": [
+        "Diploma universitário (mínimo Bachelor)",
+        "Mínimo 5 anos em mídia/comunicação corporativa",
+        "Experiência em nível sênior em ambiente institucional complexo",
+        "Rede e experiência com mídia e instituições da UE em Bruxelas",
+        "Excelente inglês e/ou francês"
+      ],
+      "compatibilidade_marli": "Muito Alta",
+      "observacoes": "Instituição multilateral da UE em Bruxelas, mas prazo expirado."
+    },
+    {
+      "id": 7,
+      "titulo": "Media and Communications Officer",
+      "organizacao": "International Maritime Organization (IMO)",
+      "tipo_organizacao": "Instituição Multilateral",
+      "localizacao": "Londres, Reino Unido",
+      "prioridade_localizacao": "Média-Alta",
+      "tipo_contrato": "Fixed-term 2 anos (1º ano probatório)",
+      "salario": "USD 56.046 + USD 42.875 (post adjustment)",
+      "status": "Aberta",
+      "prazo": "2026-03-04",
+      "link": "https://unjobs.org/vacancies/1770254147382",
+      "requisitos_principais": [
+        "Diploma universitário em comunicação/jornalismo/relações internacionais",
+        "Mínimo 2 anos em informação pública/comunicações/jornalismo",
+        "Fluência em inglês e espanhol (OBRIGATÓRIO)",
+        "Experiência em gestão de conteúdo multilíngue",
+        "Content management (WordPress, SharePoint)",
+        "Ferramentas de monitoramento de mídia",
+        "Edição multimídia"
+      ],
+      "compatibilidade_marli": "Alta",
+      "observacoes": "VAGA RELEVANTE - ONU em Londres, comunicação institucional, requer espanhol fluente (Marli tem ✓). Prazo até 04/03/2026."
+    },
+    {
+      "id": 3,
+      "titulo": "Journaliste francophone",
+      "organizacao": "AFP (Agence France-Presse)",
+      "tipo_organizacao": "Agência de Notícias",
+      "localizacao": "Beyrouth, Líbano",
+      "prioridade_localizacao": "Baixa",
+      "tipo_contrato": "CDI",
+      "salario": "Não especificado",
+      "status": "Expirada",
+      "prazo": "2025-10-26",
+      "link": "https://www.afp.com/fr/journaliste-francophone-fh",
+      "requisitos_principais": [
+        "Domínio total do árabe",
+        "Muito bom nível de inglês",
+        "Grande disponibilidade",
+        "Familiaridade com redes sociais"
+      ],
+      "compatibilidade_marli": "Baixa",
+      "observacoes": "Vaga fora da localização prioritária (Líbano). Requer árabe fluente."
+    }
+  ]
+};
+
+        let filteredVagas = vagasData.vagas;
+
+        function renderVagas(vagas) {
+            const container = document.getElementById('vagas-container');
+            const noResults = document.getElementById('no-results');
+            
+            container.innerHTML = '';
+            
+            if (vagas.length === 0) {
+                container.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            container.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            vagas.forEach(vaga => {
+                const card = document.createElement('div');
+                card.className = `vaga-card ${vaga.status.toLowerCase()}`;
+                
+                const compatibilidadeClass = vaga.compatibilidade_marli.toLowerCase().replace(' ', '-');
+                
+                const prazoDate = new Date(vaga.prazo);
+                const hoje = new Date();
+                const diasRestantes = Math.ceil((prazoDate - hoje) / (1000 * 60 * 60 * 24));
+                const prazoUrgente = diasRestantes > 0 && diasRestantes <= 14;
+                
+                let prazoTexto = '';
+                if (vaga.status === 'Aberta') {
+                    if (diasRestantes > 0) {
+                        prazoTexto = `⏰ Prazo: ${vaga.prazo} (${diasRestantes} dias restantes)`;
+                    } else {
+                        prazoTexto = `⏰ Prazo: ${vaga.prazo}`;
+                    }
+                } else if (vaga.prazo !== 'N/A') {
+                    prazoTexto = `Prazo encerrado: ${vaga.prazo}`;
+                }
+                
+                const requisitosHTML = vaga.requisitos_principais.length > 0 
+                    ? `<div class="requisitos">
+                        <h4>Requisitos Principais:</h4>
+                        <ul>
+                            ${vaga.requisitos_principais.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>`
+                    : '';
+                
+                card.innerHTML = `
+                    <div class="vaga-header">
+                        <div class="vaga-title">
+                            <h3>${vaga.titulo}</h3>
+                            <div class="organizacao">${vaga.organizacao}</div>
+                        </div>
+                        <span class="status-badge ${vaga.status.toLowerCase()}">${vaga.status}</span>
+                    </div>
+                    
+                    <span class="compatibilidade ${compatibilidadeClass}">
+                        Compatibilidade: ${vaga.compatibilidade_marli}
+                    </span>
+                    
+                    <div class="vaga-info">
+                        <div class="info-item">
+                            <span class="icon">📍</span>
+                            <span class="value">${vaga.localizacao}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="icon">🏢</span>
+                            <span class="value">${vaga.tipo_organizacao}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="icon">📄</span>
+                            <span class="value">${vaga.tipo_contrato}</span>
+                        </div>
+                        ${vaga.salario !== 'N/A' && vaga.salario !== 'Não especificado' ? `
+                        <div class="info-item">
+                            <span class="icon">💰</span>
+                            <span class="value">${vaga.salario}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${requisitosHTML}
+                    
+                    <div class="observacoes">
+                        <p><strong>Observações:</strong> ${vaga.observacoes}</p>
+                    </div>
+                    
+                    <div class="vaga-footer">
+                        <a href="${vaga.link}" target="_blank" class="btn-link">Ver Detalhes da Vaga →</a>
+                        ${prazoTexto ? `<div class="prazo ${prazoUrgente ? 'urgente' : ''}">${prazoTexto}</div>` : ''}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function applyFilters() {
+            const busca = document.getElementById('filter-busca').value.toLowerCase();
+            const status = document.getElementById('filter-status').value;
+            const localizacao = document.getElementById('filter-localizacao').value;
+            const tipo = document.getElementById('filter-tipo').value;
+            
+            filteredVagas = vagasData.vagas.filter(vaga => {
+                const matchBusca = !busca || 
+                    vaga.titulo.toLowerCase().includes(busca) ||
+                    vaga.organizacao.toLowerCase().includes(busca) ||
+                    vaga.localizacao.toLowerCase().includes(busca) ||
+                    vaga.observacoes.toLowerCase().includes(busca);
+                
+                const matchStatus = !status || vaga.status === status;
+                const matchLocalizacao = !localizacao || vaga.localizacao.includes(localizacao);
+                const matchTipo = !tipo || vaga.tipo_organizacao === tipo;
+                
+                return matchBusca && matchStatus && matchLocalizacao && matchTipo;
+            });
+            
+            renderVagas(filteredVagas);
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-busca').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-localizacao').value = '';
+            document.getElementById('filter-tipo').value = '';
+            applyFilters();
+        }
+
+        // Event listeners
+        document.getElementById('filter-busca').addEventListener('input', applyFilters);
+        document.getElementById('filter-status').addEventListener('change', applyFilters);
+        document.getElementById('filter-localizacao').addEventListener('change', applyFilters);
+        document.getElementById('filter-tipo').addEventListener('change', applyFilters);
+
+        // Renderizar vagas inicialmente
+        renderVagas(vagasData.vagas);
+    </script>
+</body>
+</html>

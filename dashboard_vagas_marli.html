@@ -385,26 +385,26 @@
             <h1>🎯 Dashboard de Vagas - Marli Souza</h1>
             <p>Oportunidades em Comunicação Institucional, Jornalismo e Produção Audiovisual</p>
             <p style="margin-top: 10px; font-size: 0.9em; color: #a0aec0;">
-                Última atualização: <strong id="ultima-atualizacao">13 de fevereiro de 2026</strong>
+                Última atualização: <strong id="ultima-atualizacao"></strong>
             </p>
         </div>
 
         <div class="stats">
             <div class="stat-card">
                 <h3>Total de Vagas</h3>
-                <div class="number" id="total-vagas">7</div>
+                <div class="number" id="total-vagas"></div>
             </div>
             <div class="stat-card">
                 <h3>Vagas Abertas</h3>
-                <div class="number" style="color: #48bb78;" id="vagas-abertas">2</div>
+                <div class="number" style="color: #48bb78;" id="vagas-abertas"></div>
             </div>
             <div class="stat-card">
                 <h3>Vagas Expiradas</h3>
-                <div class="number" style="color: #cbd5e0;" id="vagas-expiradas">5</div>
+                <div class="number" style="color: #cbd5e0;" id="vagas-expiradas"></div>
             </div>
             <div class="stat-card">
                 <h3>Alta Compatibilidade</h3>
-                <div class="number" style="color: #667eea;" id="alta-compatibilidade">4</div>
+                <div class="number" style="color: #667eea;" id="alta-compatibilidade"></div>
             </div>
         </div>
 
@@ -770,13 +770,33 @@
             applyFilters();
         }
 
+        // Atualizar contadores
+        function updateStats() {
+            document.getElementById('total-vagas').textContent = vagasData.metadata.total_vagas;
+            document.getElementById('vagas-abertas').textContent = vagasData.metadata.vagas_abertas;
+            document.getElementById('vagas-expiradas').textContent = vagasData.metadata.vagas_expiradas;
+            
+            // Contar vagas com alta compatibilidade
+            const altaCompatibilidade = vagasData.vagas.filter(v => 
+                v.compatibilidade_marli === 'Muito Alta' || v.compatibilidade_marli === 'Alta'
+            ).length;
+            document.getElementById('alta-compatibilidade').textContent = altaCompatibilidade;
+            
+            // Atualizar data
+            const dataAtualizacao = new Date(vagasData.metadata.data_atualizacao);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('ultima-atualizacao').textContent = 
+                dataAtualizacao.toLocaleDateString('pt-BR', options);
+        }
+
         // Event listeners
         document.getElementById('filter-busca').addEventListener('input', applyFilters);
         document.getElementById('filter-status').addEventListener('change', applyFilters);
         document.getElementById('filter-localizacao').addEventListener('change', applyFilters);
         document.getElementById('filter-tipo').addEventListener('change', applyFilters);
 
-        // Renderizar vagas inicialmente
+        // Inicializar
+        updateStats();
         renderVagas(vagasData.vagas);
     </script>
 </body>
